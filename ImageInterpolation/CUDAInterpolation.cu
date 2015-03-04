@@ -1168,7 +1168,6 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 										  float out_of_bounds_value) {
 	
 	if (error) {
-		cout << "1" << endl;
         return false;
         
 	}	
@@ -1178,7 +1177,6 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 	unsigned long n_cols;
 
 	if (!regular_data.GetSize(n_rows, n_cols)) {
-		cout << "2" << endl;
         return false;
         
 	}
@@ -1196,7 +1194,6 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 
 	float * regular_data_pointer;
 	if (!regular_data.GetPointerToData(&regular_data_pointer)) {
-		cout << "3" << endl;
         return false;
         
 	}
@@ -1208,37 +1205,31 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 	unsigned long should_be_one;
 
 	if (!row_coordinates.GetSize(should_be_one, n_rows_desired)) {
-		cout << "4" << endl;
         return false;
         
 	}
 
 	if (should_be_one != 1) {
-		cout << "5" << endl;
         return false;
         
 	}
 
 	if (!col_coordinates.GetSize(should_be_one, n_cols_desired)) {
-		cout << "6" << endl;
         return false;
         
 	}
 
 	if (should_be_one != 1) {
-		cout << "7" << endl;
         return false;
         
 	}
 
 	if (n_rows_desired != n_cols_desired) {
-		cout << "8" << endl;
         return false;
         
 	}
 
 	if (!interpolated_data.SetSize(1, n_rows_desired)) {
-		cout << "9" << endl;
         return false;
         
 	}
@@ -1247,7 +1238,6 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 	// TODO is there a way we don't have to hard code
 	// TODO handle this in a smarter way (do part of it first then iterate)
 	if (n_rows_desired > 33553920) {
-		cout << "10" << endl;
         return false;
         
 	}
@@ -1258,19 +1248,16 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 	float * row_loc_pointer;
 
 	if (!interpolated_data.GetPointerToData(&interpolated_data_pointer)) {
-		cout << "11" << endl;
         return false;
         
 	}
 
 	if (!row_coordinates.GetPointerToData(&row_loc_pointer)) {
-		cout << "12" << endl;
         return false;
         
 	}
 
 	if (!col_coordinates.GetPointerToData(&col_loc_pointer)) {
-		cout << "13" << endl;
         return false;
         
 	}
@@ -1280,7 +1267,6 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 
 		float * padded_data_pointer;
 		if (!padded->GetPointerToData(&padded_data_pointer)) {
-			cout << "14" << endl;
             return false;
             
 		}
@@ -1292,7 +1278,6 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 
 		PadBiCubic<<<threadGrid, threadBlock>>>(regular_data_pointer, padded_data_pointer, n_rows, n_cols);
 		if (cudaGetLastError() != cudaSuccess) {
-			cout << "15" << endl;
             return false;
             
 		}
@@ -1307,7 +1292,6 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 		cudaError_t e = cudaGetLastError();
 
 		if (e != cudaSuccess) {
-			cout << "16" << endl;
             return false;
             
 		}
@@ -1322,7 +1306,6 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 		BiCubicInterpolateClampBoundary<<<other_grid, other_block>>>(interpolated_data_pointer, n_rows_desired, row_loc_pointer, col_loc_pointer, regular_data_pointer, out_of_bounds_value, n_rows, n_cols);
 
 		if (cudaGetLastError() != cudaSuccess) {
-            cout << "17" << endl;
 			return false;
 		}
 	}
@@ -1334,7 +1317,6 @@ bool CUDA2DCubicInterpolator::CUDA2DInterpolate(CUDA2DRealMatrix<float> &regular
 		BiCubicInterpolateBiLinearBoundary<<<other_grid, other_block>>>(interpolated_data_pointer, n_rows_desired, row_loc_pointer, col_loc_pointer, regular_data_pointer, out_of_bounds_value, n_rows, n_cols);
 
 		if (cudaGetLastError() != cudaSuccess) {
-            cout << "18" << endl;
 			return false;
 		}
 	}
